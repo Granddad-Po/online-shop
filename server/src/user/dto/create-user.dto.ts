@@ -9,4 +9,7 @@ export class CreateUserDto {
 
     @IsNotEmpty()
     readonly email: string
+    
+    @IsNotEmpty()
+    readonly role: string
 }

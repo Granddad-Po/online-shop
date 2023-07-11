@@ -15,6 +15,8 @@ export class User {
     @Prop()
     email: string
     
+    @Prop()
+    role: string[]
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)
