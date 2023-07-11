@@ -5,6 +5,7 @@ import {Model} from "mongoose";
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import {LoginUserDto} from "../user/dto/login-user.dto";
+const {SECRET} = require('../../config');
 
 const generateAccessToken = (id, username, role) => {
     const payload = {
@@ -12,7 +13,7 @@ const generateAccessToken = (id, username, role) => {
         username,
         role
     }
-    return jwt.sign(payload, 'Random', {expiresIn: '24h'})
+    return jwt.sign(payload, SECRET, {expiresIn: '24h'})
 }
 
 @Injectable()
@@ -20,7 +21,7 @@ export class AuthService {
     constructor(@InjectModel(User.name) private userModel: Model<User>) {
     }
 
-    async validateUser(dto: LoginUserDto): Promise<string | UnauthorizedException> {
+    async validateUser(dto: LoginUserDto): Promise<{ token: string } | UnauthorizedException> {
         const user = await this.userModel.findOne({
             username: dto.username
         })
@@ -37,7 +38,7 @@ export class AuthService {
         
         if (user && passwordValid) {
             const token = generateAccessToken(user._id, user.username, user.role)
-            return token
+            return {token}
         }
     }
 }

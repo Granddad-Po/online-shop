@@ -1,6 +1,7 @@
-import {Body, Controller, Get, Header, HttpCode, HttpStatus, Post} from '@nestjs/common';
+import {Body, Controller, Get, Header, HttpCode, HttpStatus, Param, Post} from '@nestjs/common';
 import {UserService} from "./user.service";
 import {CreateUserDto} from "./dto/create-user.dto";
+import {ObjectId} from "mongoose";
 
 
 @Controller('users')
@@ -18,5 +19,10 @@ export class UserController {
     @Get()
     getAll() {
         return this.userService.getAll()
+    }
+    
+    @Get(':id')
+    remove(@Param('id') id: ObjectId) {
+        return this.userService.remove(id)
     }
 }
