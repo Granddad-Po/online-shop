@@ -1,7 +1,7 @@
-import {Injectable} from "@nestjs/common";
+import {BadRequestException, HttpStatus, Injectable} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
 import {User} from "./user.schema";
-import {Model, ObjectId, Types} from "mongoose";
+import {Model, ObjectId} from "mongoose";
 import {CreateUserDto} from "./dto/create-user.dto";
 import * as bcrypt from 'bcrypt';
 
@@ -12,7 +12,7 @@ export class UserService {
     constructor(@InjectModel(User.name) private userModel: Model<User>) {
     }
 
-    async create(dto: CreateUserDto): Promise<User | { warningMessage: string }> {
+    async save(dto: CreateUserDto): Promise<User | { warningMessage: string }> {
         const existingByUserName = await this.userModel.findOne({
             username: dto.username
         })
@@ -35,17 +35,27 @@ export class UserService {
         return user
     }
 
+    async findOne(idOrEmail: ObjectId | string): Promise<User | string> {
+        if (idOrEmail.toString().includes('@')) {
+            const userByEmail = await this.userModel.findOne({email: idOrEmail})
+            return userByEmail
+        } else {
+            const userById = await this.userModel.findById(idOrEmail)
+            return userById
+        }
+    }
+
     async getAll(): Promise<User[]> {
         const users = await this.userModel.find()
         return users
     }
 
-    async remove(id: ObjectId): Promise<Types.ObjectId | {warningMessage: string}> {
+    async delete(id: ObjectId): Promise<string> {
         try {
             const user = await this.userModel.findByIdAndDelete(id)
-            return user._id
+            return `Пользователь с ${user._id} был успешо удален.`
         } catch (e) {
-            return {warningMessage: 'Не удалось найти пользователя с таким ID'}
+            return 'Не удалось найти пользователя с таким ID'
         }
     }
 }

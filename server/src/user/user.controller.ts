@@ -1,4 +1,13 @@
-import {Body, Controller, Get, Header, HttpCode, HttpStatus, Param, Post} from '@nestjs/common';
+import {
+    Body,
+    Controller, Delete,
+    Get,
+    Header,
+    HttpCode,
+    HttpStatus,
+    Param, ParseUUIDPipe,
+    Post,
+} from '@nestjs/common';
 import {UserService} from "./user.service";
 import {CreateUserDto} from "./dto/create-user.dto";
 import {ObjectId} from "mongoose";
@@ -9,20 +18,25 @@ export class UserController {
     constructor(private userService: UserService) {
     }
 
-    @Post('/signup')
+    @Post()
     @HttpCode(HttpStatus.CREATED)
     @Header('Content-Type', 'application/json')
-    create(@Body() dto: CreateUserDto) {
-        return this.userService.create(dto)
+    createUser(@Body() dto: CreateUserDto) {
+        return this.userService.save(dto)
+    }
+    
+    @Get(':idOrEmail')
+    findOneUser(@Param('idOrEmail') idOrEmail: ObjectId | string) {
+        return this.userService.findOne(idOrEmail)
     }
 
     @Get()
-    getAll() {
+    getAllUsers() {
         return this.userService.getAll()
     }
-    
-    @Get(':id')
-    remove(@Param('id') id: ObjectId) {
-        return this.userService.remove(id)
+
+    @Delete(':id')
+    deleteUser(@Param('id') id: ObjectId) {
+        return this.userService.delete(id)
     }
 }

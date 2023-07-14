@@ -9,5 +9,5 @@ import {User, UserSchema} from "../user/user.schema";
     controllers: [AuthController],
     providers: [AuthService]
 })
-export class AuthModule {
+export class AuthModule{
 }
