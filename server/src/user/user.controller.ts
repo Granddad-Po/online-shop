@@ -18,11 +18,11 @@ export class UserController {
     constructor(private userService: UserService) {
     }
 
-    @Post()
+    @Post('signup')
     @HttpCode(HttpStatus.CREATED)
     @Header('Content-Type', 'application/json')
     createUser(@Body() dto: CreateUserDto) {
-        return this.userService.save(dto)
+        return this.userService.create(dto)
     }
     
     @Get(':idOrEmail')

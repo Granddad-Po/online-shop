@@ -1,44 +1,35 @@
-import {Injectable, UnauthorizedException} from '@nestjs/common';
+import {Injectable, UnauthorizedException} from "@nestjs/common";
+import {JwtService} from "@nestjs/jwt";
+import {AuthUserDto} from "./dto/auth-user.dto";
 import {InjectModel} from "@nestjs/mongoose";
 import {User} from "../user/user.schema";
 import {Model} from "mongoose";
 import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
-import {LoginUserDto} from "../user/dto/login-user.dto";
-const {SECRET} = require('../../config');
-
-const generateAccessToken = (id, username, role) => {
-    const payload = {
-        id,
-        username,
-        role
-    }
-    return jwt.sign(payload, SECRET, {expiresIn: '24h'})
-}
+const {JWT_SECRET} = require('../../config')
 
 @Injectable()
 export class AuthService {
-    constructor(@InjectModel(User.name) private userModel: Model<User>) {
+    constructor(@InjectModel(User.name) private userModel: Model<User>,
+                private readonly jwtService: JwtService) {
     }
 
-    async validateUser(dto: LoginUserDto): Promise<{ token: string } | UnauthorizedException> {
-        const user = await this.userModel.findOne({
-            username: dto.username
-        })
-
+    async auth(dto: AuthUserDto) {
+        const user = await this.userModel.findOne({username: dto.username})
         if (!user) {
             throw new UnauthorizedException('Invalid credentials')
         }
 
         const passwordValid = await bcrypt.compare(dto.password, user.password)
-
         if (!passwordValid) {
             throw new UnauthorizedException('Invalid credentials')
         }
-        
+
         if (user && passwordValid) {
-            const token = generateAccessToken(user._id, user.username, user.role)
-            return {token}
+            return this.jwtService.sign({
+                id: user._id,
+                username: user.username,
+                email: user.email
+            }, {secret: JWT_SECRET, expiresIn: '1h'})
         }
     }
 }

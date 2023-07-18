@@ -1,4 +1,4 @@
-import {BadRequestException, HttpStatus, Injectable} from "@nestjs/common";
+import {Injectable} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
 import {User} from "./user.schema";
 import {Model, ObjectId} from "mongoose";
@@ -12,7 +12,7 @@ export class UserService {
     constructor(@InjectModel(User.name) private userModel: Model<User>) {
     }
 
-    async save(dto: CreateUserDto): Promise<User | { warningMessage: string }> {
+    async create(dto: CreateUserDto): Promise<User | { warningMessage: string }> {
         const existingByUserName = await this.userModel.findOne({
             username: dto.username
         })
@@ -50,12 +50,12 @@ export class UserService {
         return users
     }
 
-    async delete(id: ObjectId): Promise<string> {
+    async delete(id: ObjectId): Promise<string | {warningMessage: string}> {
         try {
             const user = await this.userModel.findByIdAndDelete(id)
             return `Пользователь с ${user._id} был успешо удален.`
         } catch (e) {
-            return 'Не удалось найти пользователя с таким ID'
+            return {warningMessage: 'Не удалось найти пользователя с таким ID'}
         }
     }
 }
