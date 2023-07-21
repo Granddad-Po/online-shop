@@ -1,24 +1,29 @@
-import {Body, Controller, Get, Post, Res, UseGuards} from "@nestjs/common";
+import {Body, Controller, Get, HttpCode, HttpStatus, Post, Request, UseGuards} from "@nestjs/common";
 import {AuthService} from "./auth.service";
-import {AuthUserDto} from "./dto/auth-user.dto";
-import {Response} from "express";
 import {JwtAuthGuard} from "./auth.guard";
+import {ValidateUserDto} from "./dto/validate-user.dto";
+
 
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) {
     }
 
+    // @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.OK)
     @Post('/login')
-    login(@Body() dto: AuthUserDto, @Res() res: Response): void {
-        const token = this.authService.auth(dto)
-        res.cookie('auth', token, {maxAge: 3600000})
-        res.send('Authorization successful')
+    async login(@Body() dto: ValidateUserDto) {
+        const user = await this.authService.validateUser(dto)
+        if (user) {
+            return this.authService.login(user)
+        } else {
+            return {message: 'Не удалось залогиниться'}
+        }
     }
     
     @UseGuards(JwtAuthGuard)
-    @Get('/test')
-    test() {
-        return 'Все оке'
+    @Get('/profile')
+    getProfile(@Request() req) {
+        return req.user
     }
 }

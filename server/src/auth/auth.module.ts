@@ -1,7 +1,7 @@
 import {Module} from "@nestjs/common";
 import {PassportModule} from "@nestjs/passport";
 import {JwtModule} from "@nestjs/jwt";
-import {JwtStrategy} from "./strategy/jwtStrategy";
+import {JwtStrategy} from "./strategy/jwt.strategy";
 import {JwtAuthGuard} from "./auth.guard";
 import {AuthController} from "./auth.controller";
 import {AuthService} from "./auth.service";
@@ -11,17 +11,15 @@ import {User, UserSchema} from "../user/user.schema";
 
 @Module({
     imports: [
-        PassportModule.register({
-            session: false
-        }),
+        MongooseModule.forFeature([{name: User.name, schema: UserSchema}]),
+        PassportModule,
         JwtModule.register({
-            secret: process.env.JWT_SECRET,
+            secret: process.env.JWT_SECRET || "RANDOM_SECRET_KEY",
             signOptions: {expiresIn: '1h'}
         }),
-        MongooseModule.forFeature([{name: User.name, schema: UserSchema}])
     ],
     controllers: [AuthController],
-    providers: [JwtStrategy, JwtAuthGuard, AuthService],
+    providers: [AuthService, JwtStrategy, JwtAuthGuard],
     exports: [AuthService, JwtAuthGuard]
 })
 
