@@ -8,7 +8,6 @@ import {AuthService} from "./auth.service";
 import {MongooseModule} from "@nestjs/mongoose";
 import {User, UserSchema} from "../user/user.schema";
 
-const {JWT_SECRET} = require('../../config')
 
 @Module({
     imports: [
@@ -16,7 +15,7 @@ const {JWT_SECRET} = require('../../config')
             session: false
         }),
         JwtModule.register({
-            secret: JWT_SECRET,
+            secret: process.env.JWT_SECRET,
             signOptions: {expiresIn: '1h'}
         }),
         MongooseModule.forFeature([{name: User.name, schema: UserSchema}])

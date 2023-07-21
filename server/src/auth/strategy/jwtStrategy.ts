@@ -2,7 +2,6 @@ import {ExtractJwt, Strategy} from 'passport-jwt';
 import {PassportStrategy} from '@nestjs/passport';
 import {Injectable} from '@nestjs/common';
 import {Request} from "express";
-const {JWT_SECRET} = require('../../../config')
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -12,7 +11,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
                 JwtStrategy.fromTokenAsCookies,
             ]),
             ignoreExpiration: false,
-            secretOrKey: JWT_SECRET,
+            secretOrKey: process.env.JWT_SECRET,
         });
     }
 

@@ -9,7 +9,7 @@ export class AuthController {
     constructor(private authService: AuthService) {
     }
 
-    @Post()
+    @Post('/login')
     login(@Body() dto: AuthUserDto, @Res() res: Response): void {
         const token = this.authService.auth(dto)
         res.cookie('auth', token, {maxAge: 3600000})

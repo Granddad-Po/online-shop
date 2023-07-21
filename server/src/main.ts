@@ -1,13 +1,12 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app.module';
 import * as cookieParser from "cookie-parser";
-const {PORT} = require('../config')
 
 async function bootstrap() {
     try {
         const app = await NestFactory.create(AppModule);
         app.use(cookieParser())
-        await app.listen(PORT, () => console.log(`Server started on PORT: ${PORT}`));
+        await app.listen(process.env.PORT || 5050, () => console.log(`Server started on PORT: ${process.env.PORT}`));
     } catch (e) {
         console.log(e)
     }

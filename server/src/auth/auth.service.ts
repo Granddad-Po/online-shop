@@ -5,7 +5,7 @@ import {InjectModel} from "@nestjs/mongoose";
 import {User} from "../user/user.schema";
 import {Model} from "mongoose";
 import * as bcrypt from 'bcrypt';
-const {JWT_SECRET} = require('../../config')
+
 
 @Injectable()
 export class AuthService {
@@ -29,7 +29,7 @@ export class AuthService {
                 id: user._id,
                 username: user.username,
                 email: user.email
-            }, {secret: JWT_SECRET, expiresIn: '1h'})
+            }, {secret: process.env.JWT_SECRET, expiresIn: '1h'})
         }
     }
 }
