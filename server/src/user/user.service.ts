@@ -6,16 +6,20 @@ import {CreateUserDto} from "./dto/create-user.dto";
 import * as bcrypt from 'bcrypt';
 import {v4 as uuidv4} from 'uuid';
 import {MailService} from "../mail/mail.service";
+import {TokenService} from "../auth/token.service";
+import {TokenDto} from "../auth/dto/token.dto";
+import {UserDataDto} from "./dto/user-data.dto";
 
 
 @Injectable()
 
 export class UserService {
     constructor(@InjectModel(User.name) private userModel: Model<User>,
-                private mailService: MailService) {
+                private mailService: MailService,
+                private tokenService: TokenService) {
     }
 
-    async registration(dto: CreateUserDto): Promise<User | Error> {
+    async registration(dto: CreateUserDto): Promise<UserDataDto | Error> {
         const candidate = await this.userModel.findOne({
             username: dto.username
         })
@@ -38,16 +42,12 @@ export class UserService {
             activationLink
         })
         await this.mailService.sendActivationMail(dto.email, activationLink)
-        return user
-    }
-
-    async findOne(idOrEmail: ObjectId | string): Promise<User | string> {
-        if (idOrEmail.toString().includes('@')) {
-            const userByEmail = await this.userModel.findOne({email: idOrEmail})
-            return userByEmail
-        } else {
-            const userById = await this.userModel.findById(idOrEmail)
-            return userById
+        const tokenDto = new TokenDto(user)
+        const tokens = await this.tokenService.generateTokens({...tokenDto})
+        await this.tokenService.saveToken(tokenDto.id, tokens.refreshToken)
+        return {
+            ...tokens,
+            user: tokenDto
         }
     }
 

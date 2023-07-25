@@ -5,7 +5,7 @@ import {
     Header,
     HttpCode,
     HttpStatus,
-    Param, ParseUUIDPipe,
+    Param,
     Post,
 } from '@nestjs/common';
 import {UserService} from "./user.service";
@@ -18,16 +18,11 @@ export class UserController {
     constructor(private userService: UserService) {
     }
 
-    @Post('signup')
+    @Post('registration')
     @HttpCode(HttpStatus.CREATED)
     @Header('Content-Type', 'application/json')
     createUser(@Body() dto: CreateUserDto) {
         return this.userService.registration(dto)
-    }
-    
-    @Get(':idOrEmail')
-    findOneUser(@Param('idOrEmail') idOrEmail: ObjectId | string) {
-        return this.userService.findOne(idOrEmail)
     }
 
     @Get()
