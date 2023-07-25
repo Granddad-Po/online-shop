@@ -6,17 +6,23 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema()
 export class User {
-    @Prop()
+    @Prop({required: true, unique: true})
     username: string
     
-    @Prop()
+    @Prop({required: true})
     password: string
     
-    @Prop()
+    @Prop({required: true, unique: true})
     email: string
     
-    @Prop()
+    @Prop([String])
     role: string[]
+
+    @Prop({default: false})
+    isActivated: boolean
+
+    @Prop()
+    activationLink: string
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)
