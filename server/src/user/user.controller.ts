@@ -22,7 +22,7 @@ export class UserController {
     @HttpCode(HttpStatus.CREATED)
     @Header('Content-Type', 'application/json')
     createUser(@Body() dto: CreateUserDto) {
-        return this.userService.create(dto)
+        return this.userService.registration(dto)
     }
     
     @Get(':idOrEmail')

@@ -4,34 +4,40 @@ import {User} from "./model/user.schema";
 import {Model, ObjectId} from "mongoose";
 import {CreateUserDto} from "./dto/create-user.dto";
 import * as bcrypt from 'bcrypt';
+import {v4 as uuidv4} from 'uuid';
+import {MailService} from "../mail/mail.service";
 
 
 @Injectable()
 
 export class UserService {
-    constructor(@InjectModel(User.name) private userModel: Model<User>) {
+    constructor(@InjectModel(User.name) private userModel: Model<User>,
+                private mailService: MailService) {
     }
 
-    async create(dto: CreateUserDto): Promise<User | { warningMessage: string }> {
-        const existingByUserName = await this.userModel.findOne({
+    async registration(dto: CreateUserDto): Promise<User | Error> {
+        const candidate = await this.userModel.findOne({
             username: dto.username
         })
         const existingByEmail = await this.userModel.findOne({
             email: dto.email
         })
-        if (existingByUserName) {
-            return {warningMessage: 'Пользователь с таким именем уже существует'}
+        if (candidate) {
+            return new Error(`Пользователь с именем ${dto.username} уже существует`)
         }
         if (existingByEmail) {
-            return {warningMessage: 'Пользователь с таким email уже существует'}
+            return new Error(`Пользователь с почтовым адресом ${dto.email} уже существует`)
         }
         const hashedPassword = await bcrypt.hash(dto.password, 7)
+        const activationLink = uuidv4()
         const user = await this.userModel.create({
             username: dto.username,
             password: hashedPassword,
             email: dto.email,
-            role: dto.role || "USER"
+            role: dto.role || "USER",
+            activationLink
         })
+        await this.mailService.sendActivationMail(dto.email, activationLink)
         return user
     }
 
@@ -50,7 +56,7 @@ export class UserService {
         return users
     }
 
-    async delete(id: ObjectId): Promise<string | {warningMessage: string}> {
+    async delete(id: ObjectId): Promise<string | { warningMessage: string }> {
         try {
             const user = await this.userModel.findByIdAndDelete(id)
             return `Пользователь с ${user._id} был успешо удален.`
