@@ -19,7 +19,7 @@ export class UserService {
                 private tokenService: TokenService) {
     }
 
-    async registration(dto: CreateUserDto): Promise<UserDataDto | Error> {
+    async registration(dto: CreateUserDto): Promise<UserDataDto> {
         const candidate = await this.userModel.findOne({
             username: dto.username
         })
@@ -27,10 +27,10 @@ export class UserService {
             email: dto.email
         })
         if (candidate) {
-            return new Error(`Пользователь с именем ${dto.username} уже существует`)
+            throw new Error(`Пользователь с именем ${dto.username} уже существует`)
         }
         if (existingByEmail) {
-            return new Error(`Пользователь с почтовым адресом ${dto.email} уже существует`)
+            throw new Error(`Пользователь с почтовым адресом ${dto.email} уже существует`)
         }
         const hashedPassword = await bcrypt.hash(dto.password, 7)
         const activationLink = uuidv4()
