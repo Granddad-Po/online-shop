@@ -9,6 +9,7 @@ import {MailService} from "../mail/mail.service";
 import {TokenService} from "../auth/token.service";
 import {TokenDto} from "../auth/dto/token.dto";
 import {UserDataDto} from "./dto/user-data.dto";
+import {UserExistsException} from "../../exception/user-exists";
 
 
 @Injectable()
@@ -19,7 +20,7 @@ export class UserService {
                 private tokenService: TokenService) {
     }
 
-    async registration(dto: CreateUserDto): Promise<UserDataDto> {
+    async registration(dto: CreateUserDto) {
         const candidate = await this.userModel.findOne({
             username: dto.username
         })
@@ -27,10 +28,10 @@ export class UserService {
             email: dto.email
         })
         if (candidate) {
-            throw new Error(`Пользователь с именем ${dto.username} уже существует`)
+            throw new UserExistsException()
         }
         if (existingByEmail) {
-            throw new Error(`Пользователь с почтовым адресом ${dto.email} уже существует`)
+            throw new UserExistsException()
         }
         const hashedPassword = await bcrypt.hash(dto.password, 7)
         const activationLink = uuidv4()
