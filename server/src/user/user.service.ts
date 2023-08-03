@@ -5,18 +5,16 @@ import {Model, ObjectId} from "mongoose";
 import {CreateUserDto} from "./dto/create-user.dto";
 import * as bcrypt from 'bcrypt';
 import {v4 as uuidv4} from 'uuid';
-import {MailService} from "../mail/mail.service";
+import {MailingService} from "../mail/mailing.service";
 import {TokenService} from "../auth/token.service";
 import {TokenDto} from "../auth/dto/token.dto";
-import {UserDataDto} from "./dto/user-data.dto";
-import {UserExistsException} from "../../exception/user-exists";
 
 
 @Injectable()
 
 export class UserService {
     constructor(@InjectModel(User.name) private userModel: Model<User>,
-                private mailService: MailService,
+                private mailService: MailingService,
                 private tokenService: TokenService) {
     }
 
@@ -28,10 +26,10 @@ export class UserService {
             email: dto.email
         })
         if (candidate) {
-            throw new UserExistsException()
+            throw new Error('Такой пользователь уже зарегистрирован.')
         }
         if (existingByEmail) {
-            throw new UserExistsException()
+            throw new Error('Такой email уже зарегистрирован.')
         }
         const hashedPassword = await bcrypt.hash(dto.password, 7)
         const activationLink = uuidv4()
@@ -42,7 +40,7 @@ export class UserService {
             role: dto.role || "USER",
             activationLink
         })
-        await this.mailService.sendActivationMail(dto.email, activationLink)
+        await this.mailService.sendActivationMail(dto.email, `${process.env.API_URL}/users/activate/${activationLink}`)
         const tokenDto = new TokenDto(user)
         const tokens = await this.tokenService.generateTokens({...tokenDto})
         await this.tokenService.saveToken(tokenDto.id, tokens.refreshToken)
@@ -60,7 +58,7 @@ export class UserService {
     async delete(id: ObjectId): Promise<string | { warningMessage: string }> {
         try {
             const user = await this.userModel.findByIdAndDelete(id)
-            return `Пользователь с ${user._id} был успешо удален.`
+            return `Пользователь ${user.username} был успешно удален.`
         } catch (e) {
             return {warningMessage: 'Не удалось найти пользователя с таким ID'}
         }
