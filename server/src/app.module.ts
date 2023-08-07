@@ -10,7 +10,7 @@ import {MailerModule} from "@nestjs-modules/mailer";
 @Module({
     imports: [
         ConfigModule.forRoot({
-            envFilePath: '.env',
+            envFilePath: `.${process.env.NODE_ENV}.env`,
             isGlobal: true,
         }),
         MongooseModule.forRoot(process.env.DB_URL),

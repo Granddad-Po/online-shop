@@ -13,8 +13,10 @@ export class TokenService {
     }
 
     async generateTokens(payload) {
-        const accessToken = this.jwtService.sign(payload, {secret: process.env.JWT_SECRET, expiresIn: '30m'})
-        const refreshToken = this.jwtService.sign(payload, {secret: process.env.JWT_REFRESH_SECRET, expiresIn: '30d'})
+        const noPassword = ({ password, ...rest }) => rest
+        const userData = noPassword(payload)
+        const accessToken = this.jwtService.sign(userData, {secret: process.env.JWT_SECRET, expiresIn: '30m'})
+        const refreshToken = this.jwtService.sign(userData, {secret: process.env.JWT_REFRESH_SECRET, expiresIn: '30d'})
 
         return {
             accessToken,

@@ -49,6 +49,16 @@ export class UserService {
             user: tokenDto
         }
     }
+    
+    async activate(activationLink) {
+        const user = await this.userModel.findOne({activationLink})
+        console.log(user)
+        if (!user) {
+            throw new Error('Неккоректная ссылка активации')
+        }
+        user.isActivated = true
+        await user.save()
+    }
 
     async getAll(): Promise<User[]> {
         const users = await this.userModel.find()

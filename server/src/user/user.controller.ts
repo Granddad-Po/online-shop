@@ -6,12 +6,13 @@ import {
     HttpCode,
     HttpStatus,
     Param,
-    Post, Res,
+    Post, Res, UseGuards,
 } from '@nestjs/common';
 import {UserService} from "./user.service";
 import {CreateUserDto} from "./dto/create-user.dto";
 import {ObjectId} from "mongoose";
 import {Response} from "express";
+import {JwtAuthGuard} from "../auth/auth.guard";
 
 
 @Controller('users')
@@ -31,12 +32,20 @@ export class UserController {
         })
         return userData
     }
+    
+    @Get('activate/:link')
+    async activate(@Param('link') link: string, @Res() res: Response) {
+        await this.userService.activate(link)
+        return res.redirect(process.env.CLIENT_URL)
+    }
 
+    @UseGuards(JwtAuthGuard)
     @Get()
     getAllUsers() {
         return this.userService.getAll()
     }
 
+    @UseGuards(JwtAuthGuard)
     @Delete(':id')
     deleteUser(@Param('id') id: ObjectId) {
         return this.userService.delete(id)

@@ -7,11 +7,14 @@ import {AuthController} from "./auth.controller";
 import {AuthService} from "./auth.service";
 import {MongooseModule} from "@nestjs/mongoose";
 import {User, UserSchema} from "../user/model/user.schema";
+import {TokenService} from "./token.service";
+import {Token, TokenSchema} from "./model/token.schema";
 
 
 @Module({
     imports: [
         MongooseModule.forFeature([{name: User.name, schema: UserSchema}]),
+        MongooseModule.forFeature([{name: Token.name, schema: TokenSchema}]),
         PassportModule,
         JwtModule.register({
             secret: process.env.JWT_SECRET || "RANDOM_SECRET_KEY",
@@ -19,7 +22,7 @@ import {User, UserSchema} from "../user/model/user.schema";
         }),
     ],
     controllers: [AuthController],
-    providers: [AuthService, JwtStrategy, JwtAuthGuard],
+    providers: [AuthService, TokenService, JwtStrategy, JwtAuthGuard],
     exports: [AuthService, JwtAuthGuard]
 })
 
