@@ -38,7 +38,6 @@ export class UserService {
             username: dto.username,
             password: hashedPassword,
             email: dto.email,
-            role: dto.role || "USER",
             activationLink
         })
         await this.mailService.sendActivationMail(dto.email, `${process.env.API_URL}/users/activate/${activationLink}`)

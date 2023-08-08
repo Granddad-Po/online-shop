@@ -20,7 +20,7 @@ export class User {
     email: string
 
     @ApiProperty({example: 'USER', description: 'Роль пользователя'})
-    @Prop([String])
+    @Prop({type: [String], default: ['USER']})
     role: string[]
 
     @ApiProperty({example: 'false', description: 'Индикатор активации аккаунта'})
