@@ -12,11 +12,11 @@ import {UserService} from "./user.service";
 import {CreateUserDto} from "./dto/create-user.dto";
 import {ObjectId} from "mongoose";
 import {Response} from "express";
-import {JwtAuthGuard} from "../auth/auth.guard";
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {User} from "./model/user.schema";
 import {RolesGuard} from "../auth/roles/roles.guard";
-import {Roles, ROLES_KEY} from "../auth/roles/roles.decorator";
+import {Roles} from "../auth/roles/roles.decorator";
+import {AddRoleDto} from "./dto/add-role.dto";
 
 
 @ApiTags('Пользователи')
@@ -59,9 +59,19 @@ export class UserController {
 
     @ApiOperation({summary: 'Удаление пользователя'})
     @ApiResponse({status: 200, type: User})
-    @UseGuards(JwtAuthGuard)
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
     @Delete(':id')
     deleteUser(@Param('id') id: ObjectId) {
         return this.userService.delete(id)
+    }
+
+    @ApiOperation({summary: 'Выдать роль'})
+    @ApiResponse({status: 200})
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
+    @Post('role')
+    addRole(@Body() dto: AddRoleDto) {
+        return this.userService.addRole(dto)
     }
 }

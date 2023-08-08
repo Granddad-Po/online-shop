@@ -8,6 +8,7 @@ import {v4 as uuidv4} from 'uuid';
 import {MailingService} from "../mail/mailing.service";
 import {TokenService} from "../auth/token.service";
 import {TokenDto} from "../auth/dto/token.dto";
+import {AddRoleDto} from "./dto/add-role.dto";
 
 
 @Injectable()
@@ -69,7 +70,21 @@ export class UserService {
             const user = await this.userModel.findByIdAndDelete(id)
             return `Пользователь ${user.username} был успешно удален.`
         } catch (e) {
-            return {warningMessage: 'Не удалось найти пользователя с таким ID'}
+            throw new Error('Не удалось найти пользователя с таким ID')
         }
+    }
+    
+    async addRole(dto: AddRoleDto) {
+        const user = await this.userModel.findById(dto.userId)
+        if (!user) {
+            throw new Error('Не удалось найти пользователя с таким ID.')
+        }
+        const duplicate = user.role.some(role => role === dto.value)
+        if (duplicate) {
+            throw new Error(`Пользователь ${user.username} уже имеет роль ${dto.value}.`)
+        }
+        user.role.push(dto.value)
+        await user.save()
+        return `Пользователю ${user.username} была успешно выдана роль ${dto.value}.`
     }
 }
