@@ -52,7 +52,6 @@ export class UserService {
     
     async activate(activationLink) {
         const user = await this.userModel.findOne({activationLink})
-        console.log(user)
         if (!user) {
             throw new Error('Неккоректная ссылка активации')
         }

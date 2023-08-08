@@ -4,13 +4,13 @@ export class TokenDto {
     readonly id: Types.ObjectId
     readonly username: string
     readonly email: string
-    readonly isActivated: boolean
+    readonly role: string[]
 
     constructor(user) {
         this.id = user._id
         this.username = user.username
         this.email = user.email
-        this.isActivated = user.isActivated
+        this.role = user.role
 
     }
 }

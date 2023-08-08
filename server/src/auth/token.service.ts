@@ -13,7 +13,12 @@ export class TokenService {
     }
 
     async generateTokens(payload) {
-        const noPassword = ({ password, ...rest }) => rest
+        const noPassword = ({_id, username, email, role}) => ({
+            id: _id,
+            username,
+            email,
+            role
+        })
         const userData = noPassword(payload)
         const accessToken = this.jwtService.sign(userData, {secret: process.env.JWT_SECRET, expiresIn: '30m'})
         const refreshToken = this.jwtService.sign(userData, {secret: process.env.JWT_REFRESH_SECRET, expiresIn: '30d'})
