@@ -9,6 +9,7 @@ import {MailingService} from "../mail/mailing.service";
 import {TokenService} from "../auth/token.service";
 import {TokenDto} from "../auth/dto/token.dto";
 import {AddRoleDto} from "./dto/add-role.dto";
+import {UserDataDto} from "./dto/user-data.dto";
 
 
 @Injectable()
@@ -19,7 +20,7 @@ export class UserService {
                 private tokenService: TokenService) {
     }
 
-    async registration(dto: CreateUserDto) {
+    async registration(dto: CreateUserDto): Promise<UserDataDto> {
         const candidate = await this.userModel.findOne({
             username: dto.username
         })

@@ -5,6 +5,7 @@ import {AuthModule} from "./auth/auth.module";
 import {ConfigModule} from "@nestjs/config";
 import {MailingModule} from "./mail/mailing.module";
 import {MailerModule} from "@nestjs-modules/mailer";
+import { ProductPartsModule } from './product-parts/product-parts.module';
 
 
 @Module({
@@ -20,6 +21,7 @@ import {MailerModule} from "@nestjs-modules/mailer";
         MailerModule.forRoot({
             transport: 'smtps://user@domain.com:pass@smtp.domain.com'
         }),
+        ProductPartsModule,
     ],
 })
 export class AppModule {

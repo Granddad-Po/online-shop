@@ -3,10 +3,8 @@ import {
     Controller, Delete,
     Get,
     Header,
-    HttpCode,
-    HttpStatus,
     Param,
-    Post, Res, UseGuards, UsePipes,
+    Post, Res, UseGuards,
 } from '@nestjs/common';
 import {UserService} from "./user.service";
 import {CreateUserDto} from "./dto/create-user.dto";
@@ -17,7 +15,6 @@ import {User} from "./model/user.schema";
 import {RolesGuard} from "../auth/roles/roles.guard";
 import {Roles} from "../auth/roles/roles.decorator";
 import {AddRoleDto} from "./dto/add-role.dto";
-import {ValidationPipe} from "../pipes/validation.pipe";
 
 
 @ApiTags('Пользователи')
