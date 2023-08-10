@@ -8,6 +8,7 @@ import {Product} from "./product-parts.schema";
 import {ObjectId} from "mongoose";
 import {ValidationPipe} from "../pipes/validation.pipe";
 import {SearchProductDto} from "./dto/search-product.dto";
+import {SearchByNameDto} from "./dto/search-by-name.dto";
 
 
 @ApiTags('Продукты')
@@ -49,11 +50,19 @@ export class ProductPartsController {
         return this.productPartsService.new()
     }
 
-    @ApiOperation({summary: 'Получить все новинки'})
+    @ApiOperation({summary: 'Получить товар по совпадению в имени'})
     @ApiResponse({status: 200, type: [Product]})
     @UseGuards(JwtAuthGuard)
     @Post('search')
     search(@Body() dto: SearchProductDto) {
         return this.productPartsService.searchByString(dto)
+    }
+
+    @ApiOperation({summary: 'Найти товар по полному названию'})
+    @ApiResponse({status: 200, type: [Product]})
+    @UseGuards(JwtAuthGuard)
+    @Post('name')
+    getByName(@Body() dto: SearchByNameDto) {
+        return this.productPartsService.findOneByName(dto)
     }
 }

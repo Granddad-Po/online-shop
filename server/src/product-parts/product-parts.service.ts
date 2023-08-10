@@ -4,6 +4,7 @@ import {InjectModel} from "@nestjs/mongoose";
 import {Model, ObjectId} from "mongoose";
 import {Product} from "./product-parts.schema";
 import {SearchProductDto} from "./dto/search-product.dto";
+import {SearchByNameDto} from "./dto/search-by-name.dto";
 
 @Injectable()
 export class ProductPartsService {
@@ -35,8 +36,8 @@ export class ProductPartsService {
         return product
     }
 
-    async findOneByName(name: string): Promise<Product> {
-        const product = await this.productModel.findOne({name})
+    async findOneByName(dto: SearchByNameDto): Promise<Product> {
+        const product = await this.productModel.findOne({name: dto.name})
         return product
     }
 
