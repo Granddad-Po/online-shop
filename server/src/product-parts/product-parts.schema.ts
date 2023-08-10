@@ -41,7 +41,7 @@ export class Product {
 
     @ApiProperty({example: true, description: 'Самый продаваемый товар'})
     @Prop({required: true, default: false})
-    bestsellers: boolean
+    bestseller: boolean
 
     @ApiProperty({example: true, description: 'Новый товар'})
     @Prop({required: true, default: false})

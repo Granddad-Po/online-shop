@@ -4,7 +4,7 @@ import {
     Get,
     Header,
     Param,
-    Post, Res, UseGuards,
+    Post, Res, UseGuards, UsePipes,
 } from '@nestjs/common';
 import {UserService} from "./user.service";
 import {CreateUserDto} from "./dto/create-user.dto";
@@ -15,6 +15,7 @@ import {User} from "./model/user.schema";
 import {RolesGuard} from "../auth/roles/roles.guard";
 import {Roles} from "../auth/roles/roles.decorator";
 import {AddRoleDto} from "./dto/add-role.dto";
+import {ValidationPipe} from "../pipes/validation.pipe";
 
 
 @ApiTags('Пользователи')
@@ -25,6 +26,7 @@ export class UserController {
 
     @ApiOperation({summary: 'Регистрация пользователя'})
     @ApiResponse({status: 201, type: User})
+    @UsePipes(ValidationPipe)
     @Post('registration')
     @Header('Content-Type', 'application/json')
     async createUser(@Body() dto: CreateUserDto, @Res({passthrough: true}) res: Response) {
@@ -67,6 +69,7 @@ export class UserController {
     @ApiResponse({status: 200})
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
+    @UsePipes(ValidationPipe)
     @Post('role')
     addRole(@Body() dto: AddRoleDto) {
         return this.userService.addRole(dto)
