@@ -3,7 +3,6 @@ import {ProductPartsService} from "./product-parts.service";
 import {ProductPartQueryDto} from "./dto/product-part-query.dto";
 import {JwtAuthGuard} from "../auth/auth.guard";
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
-import {User} from "../user/model/user.schema";
 import {Product} from "./product-parts.schema";
 import {ObjectId} from "mongoose";
 import {ValidationPipe} from "../pipes/validation.pipe";

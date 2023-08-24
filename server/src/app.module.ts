@@ -6,6 +6,7 @@ import {ConfigModule} from "@nestjs/config";
 import {MailingModule} from "./mail/mailing.module";
 import {MailerModule} from "@nestjs-modules/mailer";
 import { ProductPartsModule } from './product-parts/product-parts.module';
+import {ShoppingCartModule} from "./shopping-cart/shopping-cart.module";
 
 
 @Module({
@@ -22,6 +23,7 @@ import { ProductPartsModule } from './product-parts/product-parts.module';
             transport: 'smtps://user@domain.com:pass@smtp.domain.com'
         }),
         ProductPartsModule,
+        ShoppingCartModule
     ],
 })
 export class AppModule {
