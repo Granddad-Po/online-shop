@@ -1,6 +1,7 @@
-import {HydratedDocument} from 'mongoose';
+import {HydratedDocument, Types} from 'mongoose';
 import {Prop, Schema, SchemaFactory} from '@nestjs/mongoose';
 import {ApiProperty} from "@nestjs/swagger";
+import {ShoppingCart} from "../../shopping-cart/shopping-cart.schema";
 
 
 export type UserDocument = HydratedDocument<User>;
@@ -30,6 +31,10 @@ export class User {
     @ApiProperty({example: '21bk3-j23k4k-jb23', description: 'Ссылка для активации аккаунта'})
     @Prop()
     activationLink: string
+
+    @ApiProperty({example: 'automatically', description: 'Корзина пользователя'})
+    @Prop({type: Types.ObjectId, ref: 'ShoppingCart'})
+    shoppingCart: ShoppingCart
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

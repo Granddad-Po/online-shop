@@ -1,4 +1,4 @@
-import {HydratedDocument, Types} from 'mongoose';
+import mongoose, {HydratedDocument} from 'mongoose';
 import {Prop, Schema, SchemaFactory} from '@nestjs/mongoose';
 import {ApiProperty} from "@nestjs/swagger";
 
@@ -8,12 +8,12 @@ export type ShoppingCartDocument = HydratedDocument<ShoppingCart>;
 @Schema()
 export class ShoppingCart {
     @ApiProperty({example: 'asd342qfasfw', description: 'ID Пользователя'})
-    @Prop({required: true, type: Types.ObjectId})
-    userId: Types.ObjectId
+    @Prop({required: true})
+    userId: mongoose.Schema.Types.ObjectId
 
     @ApiProperty({example: 'asd342qfasfw', description: 'ID Товара'})
-    @Prop({required: true, type: Types.ObjectId})
-    partId: Types.ObjectId
+    @Prop({required: true})
+    partId: mongoose.Schema.Types.ObjectId
 
     @ApiProperty({example: 'Samsung', description: 'Производитель'})
     @Prop({required: true})

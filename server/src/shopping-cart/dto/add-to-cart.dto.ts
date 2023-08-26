@@ -9,7 +9,7 @@ export class AddToCartDto {
 
     @ApiProperty({example: '123sdfj13', description: 'ID пользователя'})
     @IsOptional()
-    readonly userId?: ObjectId
+    readonly cartId?: ObjectId
 
     @ApiProperty({example: '13ljnlas21', description: 'ID товара'})
     readonly partId: ObjectId
