@@ -40,4 +40,10 @@ export class ShoppingCartController {
     removeOne(@Param('id') partId: ObjectId) {
         return this.shoppingCartService.remove(partId)
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete('all/:id')
+    removeAll(@Param('id') userId: ObjectId) {
+        return this.shoppingCartService.removeAll(userId)
+    }
 }
