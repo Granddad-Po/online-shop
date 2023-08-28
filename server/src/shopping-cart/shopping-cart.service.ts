@@ -36,20 +36,22 @@ export class ShoppingCartService {
     }
     
     async updateCount(count: number, partId: ObjectId): Promise<number> {
-        const countParts = await this.shoppingCartModel.findOneAndUpdate(partId, {count})
-        return countParts.count
+        await this.shoppingCartModel.findOneAndUpdate({partId}, {count: count})
+        const part = await this.shoppingCartModel.findOne({partId})
+        return part.count
     }
 
     async updateTotalPrice(total_price: number, partId: ObjectId): Promise<number> {
-        const countParts = await this.shoppingCartModel.findOneAndUpdate(partId, {total_price})
-        return countParts.total_price
+        await this.shoppingCartModel.findOneAndUpdate({partId}, {total_price: total_price})
+        const part = await this.shoppingCartModel.findOne({partId})
+        return part.total_price
     }
 
     async remove(partId: ObjectId): Promise<void> {
-        await this.shoppingCartModel.findOneAndDelete(partId)
+        await this.shoppingCartModel.deleteOne({partId})
     }
 
     async removeAll(userId: ObjectId): Promise<void> {
-        await this.shoppingCartModel.findOneAndDelete(userId)
+        await this.shoppingCartModel.deleteMany({userId})
     }
 }
