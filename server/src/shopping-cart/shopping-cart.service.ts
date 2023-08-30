@@ -48,7 +48,7 @@ export class ShoppingCartService {
     }
 
     async remove(partId: ObjectId): Promise<void> {
-        await this.shoppingCartModel.deleteOne({partId})
+        await this.shoppingCartModel.findOne({partId})
     }
 
     async removeAll(userId: ObjectId): Promise<void> {
