@@ -30,7 +30,6 @@ export class PaymentService {
                     description: 'Заказ №1'
                 }
             })
-            console.log(data)
             return data
         } catch (e) {
             throw new ForbiddenException({e})
